@@ -1,12 +1,18 @@
 package tracker
 
-import "fmt"
+import (
+	"fmt"
+	"task-tracker/tasks"
+)
 
 type Tracker struct {
+	repository *tasks.Repository
 }
 
-func New() *Tracker {
-	return &Tracker{}
+func New(repository *tasks.Repository) *Tracker {
+	return &Tracker{
+		repository: repository,
+	}
 }
 
 func (tracker Tracker) Add(name string) {
