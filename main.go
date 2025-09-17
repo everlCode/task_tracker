@@ -1,18 +1,13 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"task-tracker/cli"
+	"task-tracker/tracker"
 )
 
 func main() {
-	command := ""
-	if len(os.Args) > 1 {
-		command = os.Args[1]
-	} else {
-		fmt.Println("No command provided")
-		return
-	}
-
-	fmt.Println(command)
+	tracker := tracker.New()
+	router := cli.New(tracker)
+	
+	router.Handle()
 }
