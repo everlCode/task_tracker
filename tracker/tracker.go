@@ -16,8 +16,7 @@ func New(repository *tasks.Repository) *Tracker {
 }
 
 func (tracker Tracker) Add(name string) {
-	fmt.Println("ADD METHOD EXECUTE")
-	fmt.Println(name)
+	tracker.repository.Add(name)
 }
 
 func (tracker Tracker) Update(id int, name string) {
