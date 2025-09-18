@@ -2,6 +2,7 @@ package tracker
 
 import (
 	"fmt"
+	"log"
 	"task-tracker/tasks"
 )
 
@@ -16,7 +17,12 @@ func New(repository *tasks.Repository) *Tracker {
 }
 
 func (tracker Tracker) Add(name string) {
-	tracker.repository.Add(name)
+	id, err := tracker.repository.Add(name)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Task added successfully (ID: %d)", id)
 }
 
 func (tracker Tracker) Update(id int, name string) {
