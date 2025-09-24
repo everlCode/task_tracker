@@ -23,6 +23,13 @@ func New(tracker *tracker.Tracker) *Router {
 func (r Router) Call(command string, args []string) {
 	// Делаем первую букву заглавной, чтобы совпадало с экспортируемым методом
 	command = strings.ToUpper(string(command[0])) + command[1:]
+	commandSlice := strings.Split(command, "-")
+	for k, word := range commandSlice {
+		word = strings.ToUpper(string(word[0])) + word[1:]
+		commandSlice[k] = word
+	}
+
+	command = strings.Join(commandSlice, "")
 
 	reflection := reflect.ValueOf(r.Tracker)
 	method := reflection.MethodByName(command)

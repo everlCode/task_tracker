@@ -1,7 +1,6 @@
 package tracker
 
 import (
-	"fmt"
 	"log"
 	"task-tracker/tasks"
 )
@@ -44,13 +43,28 @@ func (tracker Tracker) Delete(id int) {
 }
 
 func (tracker Tracker) MarkInProgress(id int) {
-	fmt.Println("mark-in-progress METHOD EXECUTE")
+	id, err := tracker.repository.UpdateStatus(id, tasks.StatusInProgress)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Task marked in progress successfully (ID: %d)", id)
 }
 
 func (tracker Tracker) MarkDone(id int) {
-	fmt.Println("MarkDone METHOD EXECUTE")
+	id, err := tracker.repository.UpdateStatus(id, tasks.StatusDone)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Task marked done successfully (ID: %d)", id)
 }
 
 func (tracker Tracker) List(id int) {
-	fmt.Println("List METHOD EXECUTE")
+	id, err := tracker.repository.UpdateStatus(id, tasks.StatusInProgress)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Task deleted successfully (ID: %d)", id)
 }

@@ -8,6 +8,13 @@ import (
 	"os"
 )
 
+const (
+	StatusNew int = iota
+	StatusInProgress
+	StatusDone
+	StatusArchived
+)
+
 type Repository struct {
 	filepath string
 	tasks    map[int]Task
@@ -88,6 +95,22 @@ func (repository *Repository) Update(id int, name string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+
+	repository.tasks[id] = *task
+
+	if err := repository.save(); err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func (repository *Repository) UpdateStatus(id int, status int) (int, error) {
+	task, err := repository.Get(id)
+	if err != nil {
+		return 0, err
+	}
+	task.Status = status
 
 	repository.tasks[id] = *task
 
