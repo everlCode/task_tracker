@@ -26,11 +26,21 @@ func (tracker Tracker) Add(name string) {
 }
 
 func (tracker Tracker) Update(id int, name string) {
-	fmt.Println("Update METHOD EXECUTE")
+	id, err := tracker.repository.Update(id, name)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Task updated successfully (ID: %d)", id)
 }
 
 func (tracker Tracker) Delete(id int) {
-	fmt.Println("ADeleteDD METHOD EXECUTE")
+	id, err := tracker.repository.Delete(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Task deleted successfully (ID: %d)", id)
 }
 
 func (tracker Tracker) MarkInProgress(id int) {

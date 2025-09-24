@@ -31,7 +31,7 @@ func New(filepath string) *Repository {
 		return &Repository{filepath: filepath, tasks: tasks}
 	}
 	defer file.Close()
-	
+
 	if err != nil && !errors.Is(err, io.EOF) {
 		fmt.Println("Ошибка чтения файла:", err)
 		return &Repository{filepath: filepath, tasks: tasks}
@@ -53,8 +53,22 @@ func getTasksFromFile(file *os.File) (map[int]Task, error) {
 	return tasks, nil
 }
 
+func (repository *Repository) Get(id int) (*Task, error) {
+	if task, ok := repository.tasks[id]; ok {
+		return &task, nil
+	}
+
+	return nil, errors.New("Задачи не существует!")
+}
+
 func (repository *Repository) Add(name string) (int, error) {
-	id := len(repository.tasks) + 1
+	var max int = 0
+	for _, v := range repository.tasks {
+		if v.Id > max {
+			max = v.Id
+		}
+	}
+	id := max + 1
 	task := Task{
 		Id:     id,
 		Name:   name,
@@ -62,18 +76,56 @@ func (repository *Repository) Add(name string) (int, error) {
 	}
 	repository.tasks[id] = task
 
+	if err := repository.save(); err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func (repository *Repository) Update(id int, name string) (int, error) {
+	task, err := repository.Get(id)
+	if err != nil {
+		return 0, err
+	}
+
+	repository.tasks[id] = *task
+
+	if err := repository.save(); err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func (repository *Repository) Delete(id int) (int, error) {
+	_, err := repository.Get(id)
+	if err != nil {
+		return 0, err
+	}
+
+	delete(repository.tasks, id)
+
+	if err := repository.save(); err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func (repository *Repository) save() error {
 	// пересоздаём файл и пишем обновлённый JSON
 	file, err := os.Create(repository.filepath)
 	if err != nil {
-		return 0, err
+		return err
 	}
 	defer file.Close()
 
 	encoder := json.NewEncoder(file)
 	encoder.SetIndent("", "  ")
 	if err := encoder.Encode(repository.tasks); err != nil {
-		return 0, err
+		return err
 	}
 
-	return id, nil
+	return nil
 }
